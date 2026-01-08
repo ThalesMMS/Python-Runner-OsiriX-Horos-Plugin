@@ -9,7 +9,7 @@
 
 def main():
     # Keep output immediate so it shows up in the Xcode console.
-    print("Hello world!", flush=True)
+    print("Hello world!!", flush=True)
 
 
 if __name__ == "__main__":

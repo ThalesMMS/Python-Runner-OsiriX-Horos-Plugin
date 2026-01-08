@@ -79,7 +79,7 @@ class PythonRunnerPlugin: PluginFilter {
             let fallback = "Python script exited with status \(result.terminationStatus)."
             message = (details?.isEmpty == false ? details! : fallback)
         } else {
-            message = "Hello world"
+            message = "Python script ran. Search the Xcode console for a 'Hello world!!' message."
         }
 
         presentAlert(title: "Python Runner", message: message)
