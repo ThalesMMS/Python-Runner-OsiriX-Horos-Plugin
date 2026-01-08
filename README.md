@@ -1,4 +1,4 @@
-# Python Runner OsiriX/Horos Plugin
+# Python Runner Horos Plugin
 
 Minimal Horos plugin that runs a bundled Python script and shows an alert. It is meant as a clean template you can extend.
 
