@@ -1,3 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 Python-Runner-Horos-Plugin/Horos.framework/** linguist-vendored
+Python-Runner-Horos-Plugin/OsiriXAPI.framework/** linguist-vendored
