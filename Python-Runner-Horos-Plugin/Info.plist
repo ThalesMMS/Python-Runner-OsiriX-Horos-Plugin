@@ -19,6 +19,7 @@
 	<key>MenuTitles</key>
 	<array>
 		<string>Run Python Script</string>
+		<string>Preferences</string>
 	</array>
 	<key>NSPrincipalClass</key>
 	<string>PythonRunnerPlugin</string>

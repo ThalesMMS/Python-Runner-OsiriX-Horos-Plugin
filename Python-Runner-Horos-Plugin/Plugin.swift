@@ -21,6 +21,7 @@ private struct ProcessExecutionResult {
 class PythonRunnerPlugin: PluginFilter {
     private enum MenuAction: String {
         case runScript = "Run Python Script"
+        case preferences = "Preferences"
     }
 
     override func filterImage(_ menuName: String!) -> Int {
@@ -36,6 +37,8 @@ class PythonRunnerPlugin: PluginFilter {
         switch action {
         case .runScript:
             startRunFlow()
+        case .preferences:
+            showPreferences()
         }
 
         return 0
@@ -56,6 +59,17 @@ class PythonRunnerPlugin: PluginFilter {
         }
     }
 
+    private func showPreferences() {
+        logToConsole("Opening Preferences window")
+
+        // Load the PreferencesWindowController from the XIB
+        let controller = PreferencesWindowController(windowNibName: "PreferencesWindow")
+
+        // Show and bring to front
+        controller.showWindow(nil)
+        controller.window?.makeKeyAndOrderFront(nil)
+    }
+
     private func runPythonScript() {
         // Resolve the bundled script path before launching the process.
         guard let scriptURL = resolveScriptURL() else {
@@ -63,10 +77,34 @@ class PythonRunnerPlugin: PluginFilter {
             return
         }
 
-        // Use /usr/bin/env so the user's PATH resolves python3.
+        // Load venv settings to determine which Python interpreter to use.
+        let settings = VenvSettings.shared
+        let venvManager = VenvManager()
+
+        var pythonExecutable: URL
+        var usesVenv = false
+
+        // Check if venv is configured and should be used.
+        if settings.autoActivateVenv,
+           let venvPath = settings.selectedVenvPath,
+           venvManager.validateVenv(at: venvPath) {
+            // Use the venv's Python interpreter.
+            let venvPythonPath = "\(venvPath)/bin/python3"
+            pythonExecutable = URL(fileURLWithPath: venvPythonPath)
+            usesVenv = true
+            logToConsole("Using virtual environment Python: \(venvPythonPath)")
+        } else {
+            // Fallback to system python3.
+            pythonExecutable = URL(fileURLWithPath: "/usr/bin/env")
+            logToConsole("Using system Python (venv not configured or invalid)")
+        }
+
+        // Build arguments based on which Python we're using.
+        let arguments: [String] = usesVenv ? [scriptURL.path] : ["python3", scriptURL.path]
+
         let result = runSystemProcess(
-            executableURL: URL(fileURLWithPath: "/usr/bin/env"),
-            arguments: ["python3", scriptURL.path]
+            executableURL: pythonExecutable,
+            arguments: arguments
         )
 
         let message: String
