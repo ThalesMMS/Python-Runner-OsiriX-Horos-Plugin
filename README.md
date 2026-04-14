@@ -1,6 +1,6 @@
 # Python Runner OsiriX/Horos Plugin
 
-A minimal template for building Horos/OsiriX plugins with Python integration. This plugin demonstrates the workflow for running Python scripts from within medical imaging software, with support for both Horos and OsiriX platforms.
+A minimal Horos/OsiriX plugin template that runs a bundled Python script from the Image Filters menu. It is meant to be a small, working starting point for collaborators who want Python inside a plugin without first learning a larger framework.
 
 ---
 
@@ -8,7 +8,45 @@ A minimal template for building Horos/OsiriX plugins with Python integration. Th
 
 - **Working minimal template** - Starting point for building custom plugins.
 
-Runs `python_script/main.py`, prints to the console, and shows a "Hello world" alert.
+Runs `python_script/main.py`, writes `Hello world!!` to the console, and shows an in-app success alert.
+
+---
+
+## First minute: what this repo gives you
+
+- **A real build target for both Horos and OsiriX** via `./build.sh horos|osirix|both`
+- **A bundled Python entrypoint** at `Python-Runner-Horos-Plugin/python_script/main.py`
+- **A concrete first-run path**: `Plugins > Image Filters > PythonRunnerHorosPlugin > Run Python Script`
+- **A known-good expected result**:
+  - console log: `Hello world!!`
+  - app alert: `Python script ran. Search the Xcode console for a 'Hello world!!' message.`
+
+---
+
+## 30-second quickstart
+
+```bash
+git clone https://github.com/ThalesMMS/Python-Runner-OsiriX-Horos-Plugin.git
+cd Python-Runner-OsiriX-Horos-Plugin
+
+# Build for your platform
+./build.sh horos    # or: ./build.sh osirix
+
+# Install and sign the plugin
+unzip -o Releases/Horos/PythonRunnerHorosPlugin.osirixplugin.zip -d "$HOME/Library/Application Support/Horos/Plugins/"
+codesign --force --deep --sign - "$HOME/Library/Application Support/Horos/Plugins/PythonRunnerHorosPlugin.osirixplugin"
+```
+
+If you are using OsiriX, swap `horos`/`Horos` for `osirix`/`OsiriX` in the commands above.
+
+Then:
+
+1. Restart Horos/OsiriX
+2. Open any study and bring a 2D viewer window to the front
+3. Run `Plugins > Image Filters > PythonRunnerHorosPlugin > Run Python Script`
+4. Confirm you get the success alert and `Hello world!!` in the console
+
+**Complete.** You now have a working plugin template. Modify `python_script/main.py` to add your own functionality.
 
 ---
 
@@ -26,47 +64,8 @@ This plugin provides:
 - Open a study and make a 2D viewer window active before using the menu item
 - Menu item: `Plugins > Image Filters > PythonRunnerHorosPlugin > Run Python Script`
 - Action: runs `python_script/main.py` and prints to the console
-- UI: shows a simple "Hello world" alert
+- UI: shows a success alert after the script finishes
 - No DICOM export/import, no configuration UI
-
----
-
-## Quick Start Guide
-
-Get up and running:
-
-### 1. Build the plugin
-
-```bash
-# Clone the repository (if you haven't already)
-git clone https://github.com/yourusername/Python-Runner-OsiriX-Horos-Plugin.git
-cd Python-Runner-OsiriX-Horos-Plugin
-
-# Build for your platform
-./build.sh horos    # For Horos users
-./build.sh osirix   # For OsiriX users
-```
-
-### 2. Install the plugin
-
-```bash
-# For Horos
-unzip -o Releases/Horos/PythonRunnerHorosPlugin.osirixplugin.zip -d "$HOME/Library/Application Support/Horos/Plugins/"
-codesign --force --deep --sign - "$HOME/Library/Application Support/Horos/Plugins/PythonRunnerHorosPlugin.osirixplugin"
-
-# For OsiriX
-unzip -o Releases/OsiriX/PythonRunnerHorosPlugin.osirixplugin.zip -d "$HOME/Library/Application Support/OsiriX/Plugins/"
-codesign --force --deep --sign - "$HOME/Library/Application Support/OsiriX/Plugins/PythonRunnerHorosPlugin.osirixplugin"
-```
-
-### 3. Restart and test
-
-1. Restart Horos/OsiriX
-2. Open any study and bring a 2D viewer window to the front
-3. Go to `Plugins > Image Filters > PythonRunnerHorosPlugin > Run Python Script`
-4. You should see "Hello world" in the console and an alert dialog
-
-**Complete.** You now have a working plugin. Modify `python_script/main.py` to add your own functionality.
 
 ---
 
@@ -164,8 +163,8 @@ codesign --force --deep --sign - "$PLUGIN_DST/PythonRunnerHorosPlugin.osirixplug
 
 1. Open a study and bring a 2D viewer window to the front (Image Filters are disabled without an active viewer).
 2. Choose `Run Python Script` from the plugin menu.
-3. Check the console for `Hello world` from `python_script/main.py`.
-4. A simple alert appears inside Horos/OsiriX.
+3. Check the console for `Hello world!!` from `python_script/main.py`.
+4. A success alert appears inside Horos/OsiriX.
 
 ---
 

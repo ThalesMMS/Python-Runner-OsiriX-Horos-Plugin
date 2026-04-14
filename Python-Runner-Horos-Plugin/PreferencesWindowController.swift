@@ -67,7 +67,7 @@ class PreferencesWindowController: NSWindowController {
         openPanel.message = "Select a Python virtual environment directory"
         openPanel.prompt = "Select"
 
-        openPanel.beginSheetModal(for: window!) { [weak self] response in
+        presentPanel(openPanel) { [weak self] response in
             guard let self = self else { return }
 
             if response == .OK, let selectedURL = openPanel.url {
@@ -87,7 +87,7 @@ class PreferencesWindowController: NSWindowController {
         savePanel.nameFieldStringValue = "venv"
         savePanel.prompt = "Create"
 
-        savePanel.beginSheetModal(for: window!) { [weak self] response in
+        presentPanel(savePanel) { [weak self] response in
             guard let self = self else { return }
 
             if response == .OK, let selectedURL = savePanel.url {
@@ -106,6 +106,52 @@ class PreferencesWindowController: NSWindowController {
             return
         }
 
+        if let bundledRequirementsURL = resolveBundledRequirementsURL() {
+            presentRequirementsInstallChoice(
+                bundledRequirementsURL: bundledRequirementsURL,
+                venvPath: venvPath
+            )
+        } else {
+            presentRequirementsFilePicker(for: venvPath)
+        }
+    }
+
+    private func presentRequirementsInstallChoice(bundledRequirementsURL: URL, venvPath: String) {
+        let alert = NSAlert()
+        alert.messageText = "Install Packages"
+        alert.informativeText = "This plugin already bundles python_script/requirements.txt. Install those dependencies, or choose a different requirements file."
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Install Bundled Requirements")
+        alert.addButton(withTitle: "Choose File...")
+        alert.addButton(withTitle: "Cancel")
+
+        let completion: (NSApplication.ModalResponse) -> Void = { [weak self] response in
+            guard let self = self else { return }
+
+            switch response {
+            case .alertFirstButtonReturn:
+                self.logToConsole("Installing bundled requirements from: \(bundledRequirementsURL.path)")
+                self.installPackagesFromFile(
+                    requirementsPath: bundledRequirementsURL.path,
+                    venvPath: venvPath
+                )
+            case .alertSecondButtonReturn:
+                self.presentRequirementsFilePicker(for: venvPath)
+            default:
+                self.logToConsole("Package installation cancelled")
+            }
+        }
+
+        if let window = self.window {
+            alert.beginSheetModal(for: window, completionHandler: completion)
+        } else {
+            completion(alert.runModal())
+        }
+    }
+
+    private func presentRequirementsFilePicker(for venvPath: String) {
+        let bundledRequirementsURL = resolveBundledRequirementsURL()
+
         let openPanel = NSOpenPanel()
         openPanel.canChooseFiles = true
         openPanel.canChooseDirectories = false
@@ -113,8 +159,9 @@ class PreferencesWindowController: NSWindowController {
         openPanel.allowedFileTypes = ["txt"]
         openPanel.message = "Select a requirements.txt file"
         openPanel.prompt = "Install"
+        openPanel.directoryURL = bundledRequirementsURL?.deletingLastPathComponent()
 
-        openPanel.beginSheetModal(for: window!) { [weak self] response in
+        presentPanel(openPanel) { [weak self] response in
             guard let self = self else { return }
 
             if response == .OK, let selectedURL = openPanel.url {
@@ -122,6 +169,14 @@ class PreferencesWindowController: NSWindowController {
                 self.logToConsole("User selected requirements file: \(requirementsPath)")
                 self.installPackagesFromFile(requirementsPath: requirementsPath, venvPath: venvPath)
             }
+        }
+    }
+
+    private func presentPanel(_ panel: NSSavePanel, completion: @escaping (NSApplication.ModalResponse) -> Void) {
+        if let window = self.window {
+            panel.beginSheetModal(for: window, completionHandler: completion)
+        } else {
+            completion(panel.runModal())
         }
     }
 
@@ -264,6 +319,11 @@ class PreferencesWindowController: NSWindowController {
                 }
             }
         }
+    }
+
+    private func resolveBundledRequirementsURL() -> URL? {
+        let bundle = Bundle(for: type(of: self))
+        return bundle.url(forResource: "requirements", withExtension: "txt", subdirectory: "python_script")
     }
 
     private func updateStatus(_ message: String) {

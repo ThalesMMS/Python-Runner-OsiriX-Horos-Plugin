@@ -17,7 +17,7 @@ sw_vers
 ```
 
 **Expected output:**
-```
+```text
 ProductName:    macOS
 ProductVersion: 11.0 (or later)
 ```
@@ -31,7 +31,7 @@ python3 --version
 ```
 
 **Expected output:**
-```
+```text
 Python 3.x.x
 ```
 
@@ -44,7 +44,7 @@ xcodebuild -version
 ```
 
 **Expected output:**
-```
+```text
 Xcode 15.x or 16.x
 Build version xxxxx
 ```
@@ -67,12 +67,12 @@ Clone the repository to your local machine:
 
 ```bash
 cd ~/Documents
-git clone https://github.com/yourusername/Python-Runner-OsiriX-Horos-Plugin.git
+git clone https://github.com/ThalesMMS/Python-Runner-OsiriX-Horos-Plugin.git
 cd Python-Runner-OsiriX-Horos-Plugin
 ```
 
 **Expected output:**
-```
+```text
 Cloning into 'Python-Runner-OsiriX-Horos-Plugin'...
 remote: Enumerating objects: xxx, done.
 remote: Counting objects: 100% (xxx/xxx), done.
@@ -103,7 +103,7 @@ Build the plugin for your platform using the automated build script:
 ```
 
 **Expected output:**
-```
+```text
 ========================================
 Building for Horos...
 ========================================
@@ -160,7 +160,7 @@ codesign --force --deep --sign - \
 ```
 
 **Expected output:**
-```
+```text
 Archive:  Releases/Horos/PythonRunnerHorosPlugin.osirixplugin.zip
    creating: /Users/yourname/Library/Application Support/Horos/Plugins/PythonRunnerHorosPlugin.osirixplugin/
    ...
@@ -222,15 +222,13 @@ Go to the menu: **Plugins > Image Filters > PythonRunnerHorosPlugin > Run Python
 
 ### Expected output:
 
-**Console output** (open Console.app and filter for your app):
-```
-Executing Python script: main.py
-Hello world
-Python script executed successfully
+**Console output** (open Console.app and filter for your app, or watch the Xcode console while developing):
+```text
+Hello world!!
 ```
 
 **Alert dialog:**
-You should see a dialog box appear with the message: **"Hello world"**
+You should see a dialog box appear with the message: **"Python script ran. Search the Xcode console for a 'Hello world!!' message."**
 
 Click **OK** to dismiss it.
 
@@ -246,10 +244,8 @@ cat Python-Runner-Horos-Plugin/python_script/main.py
 
 **You should see:**
 ```python
-#!/usr/bin/env python3
-
 def main():
-    print("Hello world")
+    print("Hello world!!", flush=True)
 
 if __name__ == "__main__":
     main()
@@ -259,8 +255,8 @@ if __name__ == "__main__":
 1. You selected "Run Python Script" from the plugin menu
 2. The plugin located `python_script/main.py` inside the plugin bundle
 3. It executed the script using `python3`
-4. The script printed "Hello world" to the console
-5. The plugin showed an alert with the message
+4. The script printed `Hello world!!` to the console
+5. The plugin showed an alert confirming the script ran
 
 ---
 
@@ -369,12 +365,12 @@ codesign --force --deep --sign - "path/to/plugin"
 ```
 
 ### Plugin menu path
-```
+```text
 Plugins > Image Filters > PythonRunnerHorosPlugin > Run Python Script
 ```
 
 ### Key files
-```
+```text
 PythonRunnerHorosPlugin.osirixplugin/
 └── Contents/
     ├── Resources/
@@ -388,7 +384,7 @@ PythonRunnerHorosPlugin.osirixplugin/
 
 ## Getting Help
 
-- **Issues:** [GitHub Issues](https://github.com/yourusername/Python-Runner-OsiriX-Horos-Plugin/issues)
+- **Issues:** [GitHub Issues](https://github.com/ThalesMMS/Python-Runner-OsiriX-Horos-Plugin/issues)
 - **Documentation:** [README.md](../README.md)
 - **Examples:** Check the `python_script/` directory for sample scripts
 
